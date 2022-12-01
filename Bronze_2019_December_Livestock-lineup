@@ -1,0 +1,118 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+vector<pair<string,string>>order;
+vector<vector<string>>unsortedans;
+string current[7];
+void recursion(int digit, vector<string>cows)
+{
+    if(digit==8)
+    {
+        for(int i = 0; i < order.size();i++)//this loops checks if the ordering of the cows follows the rules
+        {
+            for(int j = 0; j < 8;j++)
+            {
+                if(current[j]==order[i].first)
+                {
+                    if(j==0)//start, only right side is possible
+                    {
+                        if(current[j+1]!=order[i].second)
+                        {
+                            return;//not next to each other
+                        }
+                        else
+                        {
+                            break;//check the next one
+                        }
+                    }
+                    if(j==7)//end, only left side is possible
+                    {
+                        if(current[j-1]!=order[i].second)
+                        {
+                            return; //not next to each other
+                        }
+                        else
+                        {
+                            break;//check the next one
+                        }
+                    }
+                    else
+                    {
+                        if(current[j-1]==order[i].second||current[j+1]==order[i].second)
+                        {
+                            break;//check the next law
+                        }
+                        else
+                        {
+                            return;//not next to each other
+                        }
+                    }
+                }
+            }
+        }
+        //by this point if it hasn't returned it means that it passed all the requirements
+        vector<string>tempoo;
+        for(int i = 0; i < 8; i++)
+        {
+            tempoo.push_back(current[i]);
+        }
+        unsortedans.push_back(tempoo);//pushes the list of cows into a vector, which will be sorted later to find which one should be printed.
+    }
+    else 
+    {
+        for(int i = 0; i < cows.size();i++)
+        {
+            if(cows[i]=="a")//one that has previously been used.
+            {
+                continue;
+            }
+            else
+            {
+                
+                current[digit]=cows[i];
+                string tempo = cows[i];
+                cows[i]="a";
+                recursion(digit+1,cows);
+                cows[i]=tempo;
+            }
+
+        }
+    }
+}
+int main()
+{
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    int n;
+    vector<string>cows;
+    cows.push_back("Beatrice");
+    cows.push_back("Belinda");
+    cows.push_back("Bella");
+    cows.push_back("Blue");
+    cows.push_back("Bessie");
+    cows.push_back("Betsy");
+    cows.push_back("Buttercup");
+    cows.push_back("Sue");
+    pair<string,string>temp;
+    string strtemp;
+    cin>>n;
+    for(int i = 0; i < n; i++)
+    {
+        cin>>temp.first>>strtemp>>strtemp>>strtemp>>strtemp>>temp.second;
+        if(temp.second<temp.first)//makes sure smaller alphabetically always at front
+        {
+            strtemp=temp.second;
+            temp.second=temp.first;
+            temp.first=strtemp;
+        }
+        order.push_back(temp);
+    }
+    recursion(0,cows);
+    sort(unsortedans.begin(),unsortedans.end());
+    for(int i = 0; i < 8; i++)
+    {
+        cout<<unsortedans[0][i]<<endl;
+    }
+}  
